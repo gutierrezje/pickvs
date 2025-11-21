@@ -136,7 +136,7 @@ CREATE TABLE Picks (
 | user_id | UUID | Foreign key to Users table |
 | game_id | UUID | Foreign key to Games table |
 | market_picked | VARCHAR | 'moneyline' \| 'spread' \| 'total' |
-| team_picked | VARCHAR | Selected outcome (e.g., 'Lakers', 'Warriors', 'Over', 'Under') |
+| outcome_picked | VARCHAR | Selected outcome (e.g., 'Lakers', 'Warriors', 'Over', 'Under') |
 | stake_units | DECIMAL | Always 1.0 (standardized) |
 | odds_at_pick | DECIMAL | The odds when user submitted the pick |
 | result_units | DECIMAL | Win: +0.91 (ML) or +1.50 (Odds), Loss: -1.0, NULL (pending) |

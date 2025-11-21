@@ -188,7 +188,7 @@ This logic is also part of the `process-results-lambda` function.
       {
         "game_id": "uuid",
         "market_picked": "spread",
-        "team_picked": "Los Angeles Lakers",
+        "outcome_picked": "Los Angeles Lakers",
         "odds_at_pick": 1.91
       }
     ]

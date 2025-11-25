@@ -23,11 +23,11 @@ This document breaks down the entire MVP development into logical sprints and ac
 ### Task: Set up Local Environment
 
 **Deliverables**:
-- Postgres GUI (DBeaver or pgAdmin)
+- Postgres GUI (DBeaver or pgAdmin) (Extra)
 - Python development environment (with virtual env)
 - Node.js for frontend development
 
-**Learning**: How to install and manage a local database for development (you will use RDS for production).
+**Learning**: How to install and manage a local database for development (you will use Neon for production).
 
 ---
 
@@ -60,12 +60,12 @@ This document breaks down the entire MVP development into logical sprints and ac
 
 **Deliverables**:
 - Git repository with `/backend` and `/frontend` folders
-- `backend/requirements.txt` updated with fastapi, uvicorn, asyncpg, and boto3
+- `backend/pyproject.toml` updated with fastapi, uvicorn, asyncpg, and boto3
 - `frontend/package.json` with React, axios, and other dependencies
 
 **Testing**:
-- `pip install -r requirements.txt` completes successfully
-- `npm install` in frontend folder completes successfully
+- `pixi install` completes successfully
+- `pnpm install` in frontend folder completes successfully
 
 **Learning**:
 - Monorepo structure

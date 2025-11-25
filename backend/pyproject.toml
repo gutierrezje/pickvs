@@ -36,6 +36,25 @@ python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = "-v --tb=short"
 
+[tool.ruff]
+lint.select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]
+lint.ignore = [
+    "E501"
+]
+
 [tool.pixi.tasks]
 test = "pytest"
 test-watch = "pytest --tb=short -v --looponfail"

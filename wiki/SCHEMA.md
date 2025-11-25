@@ -96,7 +96,7 @@ CREATE TABLE Odds (
     market_type VARCHAR(20) NOT NULL,              -- 'moneyline', 'spread', 'total'
     home_odds DECIMAL(7, 2) NOT NULL,             -- Decimal odds (e.g., 1.91, 2.50)
     away_odds DECIMAL(7, 2) NOT NULL,
-    spread_value DECIMAL(4, 1),                    -- Spread amount (e.g., -6.5) or Total (e.g., 220.5)
+    line_value DECIMAL(4, 1),                    -- Spread amount (e.g., -6.5) or Total (e.g., 220.5)
     UNIQUE(game_id, market_type)                   -- Only one of each market type per game
 );
 ```
@@ -108,7 +108,7 @@ CREATE TABLE Odds (
 | market_type | VARCHAR | 'moneyline' \| 'spread' \| 'total' |
 | home_odds | DECIMAL | Decimal format (e.g., 1.91 = -110 in American) |
 | away_odds | DECIMAL | For spreads/totals: odds for "over" or "away" team |
-| spread_value | DECIMAL | -6.5 for spread, 220.5 for totals (NULL for ML) |
+| line_value | DECIMAL | -6.5 for spread, 220.5 for totals (NULL for ML) |
 
 ---
 

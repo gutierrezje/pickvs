@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS Odds (
     market_type VARCHAR(20) NOT NULL,       -- 'moneyline', 'spread', 'total', etc.
     home_odds DECIMAL(7, 2) NOT NULL,
     away_odds DECIMAL(7, 2) NOT NULL,
-    spread_value DECIMAL(4, 1),             -- spread amount or total
+    line_value DECIMAL(4, 1),             -- spread amount (e.g., -6.5) or total (e.g., 220.5)
     UNIQUE(game_id, market_type)
 );
 

@@ -10,6 +10,8 @@ class GameStatus(str, Enum):
 
 @dataclass
 class GameRecord:
+    """Information about a single game."""
+
     api_game_id: str
     home_team: str
     away_team: str

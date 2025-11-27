@@ -45,5 +45,5 @@ CREATE TABLE IF NOT EXISTS Picks (
     odds_at_pick DECIMAL(7, 2) NOT NULL,
     result_units DECIMAL(5, 2),                 -- 'win', 'lose', 'push'
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE(user_id, game_id, market_type)       -- Ensure one pick per market per user
+    UNIQUE(user_id, game_id, market_picked)       -- Ensure one pick per market per user
 );

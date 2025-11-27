@@ -2,7 +2,7 @@
 authors = [{name = "Jesus Gutierrez", email = "gutierrezje.work@gmail.com"}]
 dependencies = []
 name = "backend"
-requires-python = ">= 3.11"
+requires-python = ">= 3.13"
 version = "0.1.0"
 
 [build-system]
@@ -27,11 +27,13 @@ pytest-asyncio = ">=0.23.0,<0.24"
 httpx = ">=0.25.0,<0.26"
 pyrefly = ">=0.41.0,<0.42"
 ruff = ">=0.14.4,<0.15"
+asyncpg = ">=0.31.0,<0.32"
+pytest-benchmark = ">=5.2.3,<6"
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "benchmarks"]
 asyncio_mode = "auto"
-python_files = ["test_*.py"]
+python_files = ["test_*.py", "bench_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = "-v --tb=short"
@@ -50,6 +52,10 @@ lint.select = [
     "SIM",
     # isort
     "I",
+    # pylint error
+    "PLE",
+    # pylint warn
+    "PLW",
 ]
 lint.ignore = [
     "E501"
@@ -59,5 +65,12 @@ lint.ignore = [
 test = "pytest"
 test-watch = "pytest --tb=short -v --looponfail"
 lint = "pyrefly check && ruff check"
-format = "ruff format"
+format = "ruff format && ruff check --select I --fix"
 dev = "uvicorn src.main:app --reload"
+test-db-start = "docker compose -f docker-compose.test.yml up -d"
+test-db-stop = "docker compose -f docker-compose.test.yml down -v"
+test-db-logs = "docker compose -f docker-compose.test.yml logs -f"
+load-data = "python src/data/load.py"
+benchmark = "pytest benchmarks/bench_data_loading.py::test_bench_optimized -v"
+benchmark-single = "pytest benchmarks/bench_data_loading.py::test_bench_single_inserts -v"
+benchmark-all = "pytest benchmarks/ -v"

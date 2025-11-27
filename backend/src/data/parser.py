@@ -66,9 +66,9 @@ def parse_csv(csv_path: str | Path) -> tuple[list[GameRecord], list[OddsRecord]]
             away_score = int(row["opponentScore"]) if is_home else int(row["score"])
 
             game_record = GameRecord(
-                api_game_id=f"{
-                    date.strftime('%Y%m%d')}_{home_team.replace(' ', '')}_{away_team.replace(' ', '')
-                    }",
+                api_game_id=f"{date.strftime('%Y%m%d')}_{home_team.replace(' ', '')}_{
+                    away_team.replace(' ', '')
+                }",
                 home_team=home_team,
                 away_team=away_team,
                 game_timestamp=date,

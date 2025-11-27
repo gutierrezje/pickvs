@@ -3,6 +3,7 @@ from enum import Enum
 
 
 def american_to_decimal(american_odds: int) -> float:
+    """Convert American odds to Decimal odds."""
     if american_odds > 0:
         return (american_odds / 100) + 1
     else:
@@ -17,6 +18,8 @@ class MarketType(str, Enum):
 
 @dataclass
 class OddsRecord:
+    """Odds information for a single market for a game."""
+
     api_game_id: str
     market_type: MarketType
     home_odds: float

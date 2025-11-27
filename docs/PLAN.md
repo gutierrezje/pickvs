@@ -103,6 +103,37 @@ This document breaks down the entire MVP development into logical sprints and ac
 
 **Goal**: Build the serverless data pipeline. This sprint has 0 API endpoints.
 
+### Task: Apply Phase 1 Database Indexes (CRITICAL - Do Before API Development)
+
+**Deliverables**:
+- Run `backend/sql/indexes_phase1.sql` on your Neon database
+- Verify indexes created with query: `SELECT * FROM pg_indexes WHERE schemaname = 'public'`
+
+**Why Now**:
+- Core indexes for Games, Odds, and Picks tables
+- 10-50x performance improvement on key queries
+- Essential before adding real user traffic
+
+**Testing**:
+```sql
+-- Test that indexes are being used
+EXPLAIN ANALYZE
+SELECT * FROM Games
+WHERE status = 'Scheduled'
+ORDER BY game_timestamp
+LIMIT 20;
+-- Should see "Index Scan using idx_games_status_timestamp"
+```
+
+**Learning**:
+- How indexes dramatically improve read performance
+- Understanding PostgreSQL query planning with EXPLAIN ANALYZE
+- Database optimization best practices
+
+**Reference**: See `backend/docs/database-optimization.md` for detailed explanation
+
+---
+
 ### Task: Build fetch-odds-lambda
 
 **Deliverables**:
@@ -237,6 +268,45 @@ This document breaks down the entire MVP development into logical sprints and ac
 ---
 
 ## Sprint 5: Deployment & Go-Live
+
+### Task: Apply Phase 2 Database Indexes (Post-Launch Optimization)
+
+**When**: After 1-2 weeks of production traffic
+
+**Deliverables**:
+- Analyze slow queries using PostgreSQL logs
+- Run `backend/sql/indexes_phase2.sql` selectively based on usage patterns
+- Monitor query performance with EXPLAIN ANALYZE
+
+**Why Wait**:
+- Some indexes may not be needed based on actual usage
+- Indexes have a write cost - only add if read benefit justifies it
+- Real user data reveals actual bottlenecks
+
+**Decision Criteria**:
+```sql
+-- Find slow queries in your database
+SELECT
+    query,
+    calls,
+    total_exec_time,
+    mean_exec_time
+FROM pg_stat_statements
+ORDER BY mean_exec_time DESC
+LIMIT 10;
+```
+
+**What to Add**:
+- Team filtering indexes: Only if users frequently filter by team
+- Leaderboard indexes: Only when leaderboard feature is live
+- Partial indexes: For advanced optimization
+
+**Learning**:
+- Data-driven index optimization
+- Monitoring production database performance
+- Understanding the trade-offs between read and write performance
+
+---
 
 ### Task: Deploy Backend API (Render)
 

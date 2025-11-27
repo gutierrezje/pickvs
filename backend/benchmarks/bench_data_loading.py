@@ -47,9 +47,7 @@ async def test_bench_optimized(benchmark, benchmark_db, subset_data):
     Extrapolate results by 5x to estimate full dataset performance.
     """
     subset_games, subset_odds = subset_data
-    print(
-        f"\nOptimized: {len(subset_games):,} games, {len(subset_odds):,} odds (20%)"
-    )
+    print(f"\nOptimized: {len(subset_games):,} games, {len(subset_odds):,} odds (20%)")
 
     async def run_load():
         async with benchmark_db.transaction():

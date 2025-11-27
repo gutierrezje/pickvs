@@ -14,6 +14,7 @@ dist-ssr
 .env
 .config
 backend/data/
+backend/wiki/
 
 # Editor directories and files
 .vscode/*

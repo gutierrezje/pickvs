@@ -1,10 +1,4 @@
-"""Data loader for importing CSV data into the database.
-
-Performance optimizations:
-- Transaction wrapper: Single commit instead of auto-commit per insert
-- executemany for odds: Batches 1000 odds records per network call
-- Progress reporting: Shows status every 500 games, 1000 odds
-"""
+"""Data loader for importing CSV data into the database."""
 
 import asyncio
 import os
@@ -198,6 +192,7 @@ async def load_csv_to_db(csv_path: str | Path, use_pooler: bool = False) -> None
     finally:
         await conn.close()
         print("Database connection closed")
+
 
 if __name__ == "__main__":
     csv_path = Path(__file__).parent.parent.parent / "data" / "oddsData.csv"

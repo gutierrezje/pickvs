@@ -163,7 +163,7 @@ packages:
 - pypi: ./
   name: backend
   version: 0.1.0
-  sha256: ef3715ed6571bdf28c5a1c8e5a94b76ad3459b7acc7365c2836247d12f8514c7
+  sha256: 041030ef33e3e0ca7cba8f2b6a893eb3ff0c5a9c381b6a0560fe1eeff8482455
   requires_python: '>=3.13'
   editable: true
 - conda: https://conda.anaconda.org/conda-forge/osx-arm64/bzip2-1.0.8-hd037594_8.conda

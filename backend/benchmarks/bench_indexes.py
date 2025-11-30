@@ -1,9 +1,5 @@
 """Benchmarks for database index performance.
 
-Run benchmarks:
-    pixi run benchmark-indexes-before  # Before applying indexes
-    pixi run benchmark-indexes-after   # After applying indexes
-
 Compare results to measure index performance improvement.
 """
 
@@ -11,7 +7,7 @@ import pytest
 
 
 @pytest.mark.asyncio
-async def test_bench_query_scheduled_games(benchmark, benchmark_db):
+async def bench_query_scheduled_games(benchmark, benchmark_db):
     """Benchmark: Fetch scheduled games ordered by timestamp.
 
     Without index: Full table scan + sort
@@ -27,16 +23,15 @@ async def test_bench_query_scheduled_games(benchmark, benchmark_db):
         LIMIT 20;
     """
 
-    @benchmark
     async def run_query():
         return await benchmark_db.fetch(query)
 
-    result = await run_query
+    result = await benchmark.pedantic(run_query, rounds=10, iterations=5)
     print(f"\nReturned {len(result)} scheduled games")
 
 
 @pytest.mark.asyncio
-async def test_bench_query_game_odds(benchmark, benchmark_db):
+async def bench_query_game_odds(benchmark, benchmark_db):
     """Benchmark: Fetch odds for a specific game.
 
     Without index: Full table scan of Odds table
@@ -56,16 +51,15 @@ async def test_bench_query_game_odds(benchmark, benchmark_db):
         ORDER BY market_type;
     """
 
-    @benchmark
     async def run_query():
         return await benchmark_db.fetch(query, game_id_result)
 
-    result = await run_query
+    result = await benchmark.pedantic(run_query, rounds=10, iterations=5)
     print(f"\nReturned {len(result)} odds for game")
 
 
 @pytest.mark.asyncio
-async def test_bench_query_user_picks(benchmark, benchmark_db):
+async def bench_query_user_picks(benchmark, benchmark_db):
     """Benchmark: Fetch user's recent picks.
 
     Without index: Full table scan of Picks table
@@ -86,16 +80,15 @@ async def test_bench_query_user_picks(benchmark, benchmark_db):
         LIMIT 20;
     """
 
-    @benchmark
     async def run_query():
         return await benchmark_db.fetch(query, test_user_id)
 
-    result = await run_query
+    result = await benchmark.pedantic(run_query, rounds=10, iterations=5)
     print(f"\nReturned {len(result)} picks for user")
 
 
 @pytest.mark.asyncio
-async def test_bench_query_explain_scheduled_games(benchmark_db):
+async def bench_query_explain_scheduled_games(benchmark_db):
     """Show query plan for scheduled games query.
 
     Run this with pytest -v -s to see output.
@@ -121,7 +114,7 @@ async def test_bench_query_explain_scheduled_games(benchmark_db):
 
 
 @pytest.mark.asyncio
-async def test_bench_query_explain_game_odds(benchmark_db):
+async def bench_query_explain_game_odds(benchmark_db):
     """Show query plan for game odds lookup.
 
     Run this with pytest -v -s to see output.

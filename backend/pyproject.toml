@@ -29,13 +29,17 @@ pyrefly = ">=0.41.0,<0.42"
 ruff = ">=0.14.4,<0.15"
 asyncpg = ">=0.31.0,<0.32"
 pytest-benchmark = ">=5.2.3,<6"
+pyjwt = ">=2.10.1,<3"
+passlib = ">=1.7.4,<2"
+bcrypt = ">=5.0.0,<6"
+pydantic = ">=2.12.5,<3"
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "benchmarks"]
 asyncio_mode = "auto"
 python_files = ["test_*.py", "bench_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
+python_classes = ["Test*", "Bench*"]
+python_functions = ["test_*", "bench_*"]
 addopts = "-v --tb=short"
 
 [tool.ruff]
@@ -70,9 +74,17 @@ dev = "uvicorn src.main:app --reload"
 test-db-start = "docker compose -f docker-compose.test.yml up -d"
 test-db-stop = "docker compose -f docker-compose.test.yml down -v"
 test-db-logs = "docker compose -f docker-compose.test.yml logs -f"
+
 load-data = "python src/data/load.py"
-benchmark = "pytest benchmarks/bench_data_loading.py::test_bench_optimized -v"
-benchmark-single = "pytest benchmarks/bench_data_loading.py::test_bench_single_inserts -v"
-benchmark-all = "pytest benchmarks/ -v"
-benchmark-indexes = "pytest benchmarks/bench_indexes.py -v --benchmark-save=indexes"
-benchmark-indexes-compare = "pytest benchmarks/bench_indexes.py -v --benchmark-compare=indexes"
+
+# Data loading benchmarks (write performance)
+bench-data-loading = "pytest benchmarks/bench_data_loading.py::bench_batch_inserts -v"
+bench-data-loading-single = "pytest benchmarks/bench_data_loading.py::bench_single_inserts -v"
+bench-data-loading-all = "pytest benchmarks/bench_data_loading.py -v"
+
+# Index benchmarks (read performance)
+bench-indexes = "pytest benchmarks/bench_indexes.py -v --benchmark-save=indexes"
+bench-indexes-compare = "pytest benchmarks/bench_indexes.py -v --benchmark-compare=indexes"
+
+# Run all benchmarks
+bench-all = "pytest benchmarks/ -v"

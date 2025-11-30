@@ -1,0 +1,148 @@
+{
+    "machine_info": {
+        "node": "Jesuss-MacBook-Pro.local",
+        "processor": "arm",
+        "machine": "arm64",
+        "python_compiler": "Clang 19.1.7 ",
+        "python_implementation": "CPython",
+        "python_implementation_version": "3.13.9",
+        "python_version": "3.13.9",
+        "python_build": [
+            "main",
+            "Oct 22 2025 23:38:18"
+        ],
+        "release": "24.6.0",
+        "system": "Darwin",
+        "cpu": {
+            "python_version": "3.13.9.final.0 (64 bit)",
+            "cpuinfo_version": [
+                9,
+                0,
+                0
+            ],
+            "cpuinfo_version_string": "9.0.0",
+            "arch": "ARM_8",
+            "bits": 64,
+            "count": 10,
+            "arch_string_raw": "arm64",
+            "brand_raw": "Apple M1 Pro"
+        }
+    },
+    "commit_info": {
+        "id": "8ecb32cca1471442cd9f2af256b11ce141749d30",
+        "time": "2025-11-27T03:59:59-08:00",
+        "author_time": "2025-11-27T03:59:59-08:00",
+        "dirty": true,
+        "project": "pickvs",
+        "branch": "main"
+    },
+    "benchmarks": [
+        {
+            "group": null,
+            "name": "bench_query_scheduled_games",
+            "fullname": "benchmarks/bench_indexes.py::bench_query_scheduled_games",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 9.334005881100893e-07,
+                "max": 5.100000998936594e-06,
+                "mean": 1.3741801376454532e-06,
+                "stddev": 1.3097782646451486e-06,
+                "rounds": 10,
+                "median": 9.458992280997335e-07,
+                "iqr": 2.4997279979288515e-08,
+                "q1": 9.416020475327969e-07,
+                "q3": 9.665993275120854e-07,
+                "iqr_outliers": 2,
+                "stddev_outliers": 1,
+                "outliers": "1;2",
+                "ld15iqr": 9.334005881100893e-07,
+                "hd15iqr": 1.0749994544312357e-06,
+                "ops": 727706.632198468,
+                "total": 1.3741801376454532e-05,
+                "iterations": 5
+            }
+        },
+        {
+            "group": null,
+            "name": "bench_query_game_odds",
+            "fullname": "benchmarks/bench_indexes.py::bench_query_game_odds",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 9.331997716799378e-07,
+                "max": 3.833201481029391e-06,
+                "mean": 1.3608191511593759e-06,
+                "stddev": 9.493411541445594e-07,
+                "rounds": 10,
+                "median": 9.457988198846579e-07,
+                "iqr": 8.34028469398618e-08,
+                "q1": 9.333976777270436e-07,
+                "q3": 1.0168005246669054e-06,
+                "iqr_outliers": 2,
+                "stddev_outliers": 1,
+                "outliers": "1;2",
+                "ld15iqr": 9.331997716799378e-07,
+                "hd15iqr": 2.1667976398020984e-06,
+                "ops": 734851.5040724044,
+                "total": 1.360819151159376e-05,
+                "iterations": 5
+            }
+        },
+        {
+            "group": null,
+            "name": "bench_query_user_picks",
+            "fullname": "benchmarks/bench_indexes.py::bench_query_user_picks",
+            "params": null,
+            "param": null,
+            "extra_info": {},
+            "options": {
+                "disable_gc": false,
+                "timer": "perf_counter",
+                "min_rounds": 5,
+                "max_time": 1.0,
+                "min_time": 5e-06,
+                "warmup": false
+            },
+            "stats": {
+                "min": 9.081995813176036e-07,
+                "max": 3.9584003388881685e-06,
+                "mean": 1.2358187814243139e-06,
+                "stddev": 9.569645579012356e-07,
+                "rounds": 10,
+                "median": 9.29197994992137e-07,
+                "iqr": 4.16010152548552e-08,
+                "q1": 9.083974873647094e-07,
+                "q3": 9.499985026195646e-07,
+                "iqr_outliers": 1,
+                "stddev_outliers": 1,
+                "outliers": "1;1",
+                "ld15iqr": 9.081995813176036e-07,
+                "hd15iqr": 3.9584003388881685e-06,
+                "ops": 809180.1282122235,
+                "total": 1.2358187814243137e-05,
+                "iterations": 5
+            }
+        }
+    ],
+    "datetime": "2025-11-29T10:33:11.574851+00:00",
+    "version": "5.2.3"
+}

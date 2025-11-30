@@ -34,31 +34,31 @@ def parsed_data(csv_path):
 
 @pytest.fixture(scope="module")
 def subset_data(parsed_data):
-    """Create 20% subset for benchmarking."""
+    """Create 75% subset for benchmarking."""
     games, odds = parsed_data
     return create_subset(games, odds, 0.75)
 
 
 @pytest.mark.asyncio
-async def test_bench_optimized(benchmark, benchmark_db, subset_data):
+async def bench_batch_inserts(benchmark, benchmark_db, subset_data):
     """Benchmark optimized approach with transaction + executemany.
 
     Uses transaction wrapper + executemany for odds batching.
     Extrapolate results by 5x to estimate full dataset performance.
     """
     subset_games, subset_odds = subset_data
-    print(f"\nOptimized: {len(subset_games):,} games, {len(subset_odds):,} odds (20%)")
+    print(f"\nOptimized: {len(subset_games):,} games, {len(subset_odds):,} odds (75%)")
 
     async def run_load():
         async with benchmark_db.transaction():
             game_id_map = await insert_games(benchmark_db, subset_games)
             await insert_odds(benchmark_db, subset_odds, game_id_map)
 
-    await benchmark.pedantic(run_load, rounds=1, iterations=1)
+    await benchmark.pedantic(run_load, rounds=3, iterations=3)
 
 
 @pytest.mark.asyncio
-async def test_bench_single_inserts(benchmark, benchmark_db, subset_data):
+async def bench_single_inserts(benchmark, benchmark_db, subset_data):
     """Benchmark single-insert approach (transaction per insert).
 
     Uses individual transactions for each insert to simulate worst-case scenario.

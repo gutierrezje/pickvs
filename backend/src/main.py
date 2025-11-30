@@ -1,10 +1,12 @@
-from click.decorators import command
+from contextlib import asynccontextmanager
+
+import asyncpg
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
-import asyncpg
-from .config import settings
+
 from . import database
+from .config import settings
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -24,11 +26,7 @@ async def lifespan(app: FastAPI):
     print("Database pool closed")
 
 
-app = FastAPI(
-    title="PickVs API", 
-    version="0.1.0", 
-    lifespan=lifespan
-)
+app = FastAPI(title="PickVs API", version="0.1.0", lifespan=lifespan)
 
 # CORS middleware for frontend communication
 app.add_middleware(

@@ -31,7 +31,7 @@ asyncpg = ">=0.31.0,<0.32"
 pytest-benchmark = ">=5.2.3,<6"
 pyjwt = ">=2.10.1,<3"
 passlib = ">=1.7.4,<2"
-bcrypt = ">=5.0.0,<6"
+bcrypt = ">=4.0.0,<5"
 pydantic = ">=2.12.5,<3"
 
 [tool.pytest.ini_options]
@@ -66,7 +66,7 @@ lint.ignore = [
 ]
 
 [tool.pixi.tasks]
-test = "pytest"
+test = "pytest tests/ -v"
 test-watch = "pytest --tb=short -v --looponfail"
 lint = "pyrefly check && ruff check"
 format = "ruff format && ruff check --select I --fix"

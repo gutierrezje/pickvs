@@ -2,6 +2,7 @@ import asyncpg
 
 db_pool: asyncpg.Pool | None = None
 
+
 async def get_db():
     """Get a database connection from the pool."""
     if db_pool is None:

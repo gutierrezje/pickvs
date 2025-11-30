@@ -15,7 +15,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/argon2-cffi-bindings-25.1.0-py313h6535dbc_2.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/async-timeout-5.0.1-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/asyncpg-0.31.0-py313h9734d34_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/bcrypt-5.0.0-py313h2c089d5_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/bcrypt-4.3.0-py313h80e0809_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/bzip2-1.0.8-hd037594_8.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2025.10.5-hbd8a1cb_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/certifi-2025.10.5-pyhd8ed1ab_0.conda
@@ -198,12 +198,12 @@ packages:
 - pypi: ./
   name: backend
   version: 0.1.0
-  sha256: 7054bd4d75f5fb6aac746163503f84636ced93949f05f5947bd8d5efeb83bdfe
+  sha256: 88cf7979c30cd1a8bded75ea316808ace2b6c51d33dc5e39a4126f7a8bb7ac34
   requires_python: '>=3.13'
   editable: true
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/bcrypt-5.0.0-py313h2c089d5_1.conda
-  sha256: c8e3b95ad2665dc16ac37888fb91dd481fa759bad1fbf799451d12d6bfaec600
-  md5: 4b14cba28eaf98170c2ddd7e900efa07
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/bcrypt-4.3.0-py313h80e0809_2.conda
+  sha256: 61d439c247012f54af0c0823f0f403759bd929e53f50579c1c60c3e1f50d878f
+  md5: 480823596a5b5b3644fba1356e7b50ce
   depends:
   - python
   - __osx >=11.0
@@ -215,8 +215,8 @@ packages:
   license_family: APACHE
   purls:
   - pkg:pypi/bcrypt?source=hash-mapping
-  size: 267465
-  timestamp: 1762497730829
+  size: 263393
+  timestamp: 1756811915499
 - conda: https://conda.anaconda.org/conda-forge/osx-arm64/bzip2-1.0.8-hd037594_8.conda
   sha256: b456200636bd5fecb2bec63f7e0985ad2097cf1b83d60ce0b6968dffa6d02aa1
   md5: 58fd217444c2a5701a44244faf518206

@@ -2,13 +2,17 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Users table
+-- NOTE: total_picks is denormalized for performance (leaderboard queries).
+-- TRADEOFF: Could be calculated as COUNT(*) from Picks table to save storage
+-- and ensure accuracy, but denormalization avoids JOIN overhead on leaderboard.
+-- TODO: Benchmark query performance to determine if denormalization is necessary.
 CREATE TABLE IF NOT EXISTS Users (
     user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     total_units DECIMAL(10, 2) DEFAULT 0.00,    -- Net units won/lost
-    total_wagered DECIMAL(10, 2) DEFAULT 0.00,  -- Number of picks
+    total_picks DECIMAL(10, 2) DEFAULT 0.00,    -- Number of picks (denormalized from Picks table)
     roi DECIMAL(5, 2) DEFAULT 0.00,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -47,3 +51,28 @@ CREATE TABLE IF NOT EXISTS Picks (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(user_id, game_id, market_picked)       -- Ensure one pick per market per user
 );
+
+-- ============================================================================
+-- INDEXES (Phase 1 - Critical for performance)
+-- ============================================================================
+
+-- Index for fetching scheduled/upcoming games ordered by time
+-- Used by: GET /api/games
+CREATE INDEX IF NOT EXISTS idx_games_status_timestamp
+ON Games(status, game_timestamp)
+WHERE status IN ('Scheduled', 'InProgress');
+
+-- Index for looking up odds for a specific game
+-- Used by: GET /api/games/:id
+CREATE INDEX IF NOT EXISTS idx_odds_game_market
+ON Odds(game_id, market_type);
+
+-- Index for fetching a user's pick history
+-- Used by: GET /api/picks/me
+CREATE INDEX IF NOT EXISTS idx_picks_user_created
+ON Picks(user_id, created_at DESC);
+
+-- Index for username lookups during authentication
+-- Used by: POST /api/auth/login
+CREATE INDEX IF NOT EXISTS idx_users_username
+ON Users(username);

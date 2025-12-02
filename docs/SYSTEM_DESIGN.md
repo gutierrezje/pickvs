@@ -114,8 +114,8 @@ This logic is also part of the `process-results-lambda` function.
 
 - Aggregates all graded picks for each user into performance statistics:
   - `total_units`: Sum of all `result_units` across all picks
-  - `total_wagered`: Count of all picks (each pick = 1 unit wagered)
-  - `roi`: `(total_units / total_wagered) * 100` (percentage return on investment)
+  - `total_picks`: Count of all picks
+  - `roi`: `(total_units / total_picks) * 100` (percentage return on investment)
 - Updates the `Users` table with these aggregated metrics
 - Executes via `asyncpg` for non-blocking database operations
 
@@ -219,7 +219,7 @@ This logic is also part of the `process-results-lambda` function.
         "rank": 1,
         "username": "string",
         "total_units": number,
-        "total_wagered": number,
+        "total_picks": number,
         "roi": number (percentage),
         "accuracy": number (win_rate percentage),
         "picks_since_minimum": number (picks above the 20-pick threshold)
@@ -228,7 +228,7 @@ This logic is also part of the `process-results-lambda` function.
   }
   ```
 - **Notes**:
-  - Only users with `total_wagered >= 20` are included
+  - Only users with `total_picks >= 20` are included
   - Sorted by ROI descending, then total_units descending
   - Represents long-term skill and consistency
   - Late starters see exactly how many picks they need to rank
@@ -250,7 +250,7 @@ This logic is also part of the `process-results-lambda` function.
         "rank": 1,
         "username": "string",
         "total_units": number,
-        "total_wagered": number,
+        "total_picks": number,
         "roi": number (percentage),
         "accuracy": number (win_rate percentage)
       }
@@ -259,6 +259,7 @@ This logic is also part of the `process-results-lambda` function.
   ```
 - **Notes**:
   - No minimum picks requirement (fresh start weekly)
+  - Sorted by ROI descending, then total_units descending
   - Shows momentum and current form
   - Encourages late starters and new users
   - Resets every 7 days

@@ -1,5 +1,9 @@
 # PickVs
 
+## TODO
+- [ ] drop and recreate tables
+- [ ] reupload historical data
+
 ## Development
 pixi is used for Python package management for the backend, install that first if necessary. Then go into the directory, and install dependencies. 
 

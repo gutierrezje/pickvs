@@ -36,7 +36,7 @@ CREATE TABLE Users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     total_units DECIMAL(10, 2) DEFAULT 0.00,       -- Net profit/loss
-    total_wagered DECIMAL(10, 2) DEFAULT 0.00,     -- Number of picks
+    total_picks DECIMAL(10, 2) DEFAULT 0.00,       -- Number of picks
     roi DECIMAL(5, 2) DEFAULT 0.00,                -- Return on investment %
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -49,7 +49,7 @@ CREATE TABLE Users (
 | email | VARCHAR | Unique email address |
 | password_hash | VARCHAR | Hashed password (bcrypt) |
 | total_units | DECIMAL | Updated by process-results-lambda |
-| total_wagered | DECIMAL | Updated by process-results-lambda |
+| total_picks | DECIMAL | Updated by process-results-lambda |
 | roi | DECIMAL | Updated by process-results-lambda |
 | created_at | TIMESTAMPTZ | Auto-set on insert |
 

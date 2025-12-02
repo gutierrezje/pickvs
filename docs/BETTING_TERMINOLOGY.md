@@ -126,24 +126,24 @@ Units normalize betting outcomes across picks with different odds, allowing fair
 
 ---
 
-### Total Wagered
-**total_wagered** is the count of picks submitted (since each pick = 1 unit wagered).
+### Total Picks
+**total_picks** is the count of picks submitted (since each pick = 1 unit wagered).
 
-- **Formula**: `total_wagered = count of all user's picks (regardless of outcome)`
-- **Example**: User has made 25 picks → total_wagered = 25.0 units
-- **Leaderboard Requirement**: Users must have `total_wagered >= 20` to appear in lifetime rankings
+- **Formula**: `total_picks = count of all user's picks (regardless of outcome)`
+- **Example**: User has made 25 picks → total_picks = 25
+- **Leaderboard Requirement**: Users must have `total_picks >= 20` to appear in lifetime rankings
 
-**In Database**: Stored in `Users.total_wagered`, updated daily by `process-results-lambda`
+**In Database**: Stored in `Users.total_picks`, updated daily by `process-results-lambda`
 
 ---
 
 ### ROI (Return on Investment)
 **ROI** measures how efficiently a user's picks have performed.
 
-- **Formula**: `ROI = (total_units / total_wagered) × 100` (percentage)
+- **Formula**: `ROI = (total_units / total_picks) × 100` (percentage)
 - **Interpretation**:
-  - ROI = 10% means +10 units profit on 100 units wagered
-  - ROI = -5% means -5 units loss on 100 units wagered
+  - ROI = 10% means +10 units profit on 100 picks
+  - ROI = -5% means -5 units loss on 100 picks
   - ROI = 0% means break-even (total_units ≈ 0)
 - **Primary Leaderboard Sort**: Users ranked by highest ROI descending
 
@@ -158,10 +158,10 @@ Units normalize betting outcomes across picks with different odds, allowing fair
 ### Lifetime Rankings
 The primary leaderboard tracking long-term betting skill.
 
-- **Requirement**: Minimum 20 picks (`total_wagered >= 20`)
+- **Requirement**: Minimum 20 picks (`total_picks >= 20`)
 - **Sort**: Primary by ROI (descending), secondary by total_units (descending)
 - **Purpose**: Identifies users with proven, consistent betting skill over time
-- **Metric**: Represents return efficiency on every dollar wagered
+- **Metric**: Represents return efficiency per pick
 - **Visible Field**: `picks_since_minimum` shows how many picks above the 20-pick threshold
 
 ---
@@ -171,9 +171,9 @@ A secondary leaderboard showing current momentum and recent form.
 
 - **Requirement**: No minimum picks (resets weekly, new users can compete)
 - **Time Window**: Last 7 days (resets Monday mornings)
-- **Sort**: By total_units (descending)
+- **Sort**: Primary by ROI (descending), secondary by total_units (descending)
 - **Purpose**: Shows who's winning right now, encourages participation from new users
-- **Visible Field**: Same metrics as lifetime (total_units, total_wagered, roi, accuracy)
+- **Visible Field**: Same metrics as lifetime (total_units, total_picks, roi, accuracy)
 
 ---
 
@@ -205,10 +205,10 @@ A secondary leaderboard showing current momentum and recent form.
 | **Total** | Predict combined score over/under | Over 220.5 → combined score > 220.5 |
 | **Decimal Odds** | Total return per unit wagered | 1.91 = $1 + $0.91 profit |
 | **Push** | Exact tie (only in spread/total) | Lakers -6.5, final diff = 6.5 exactly |
-| **Units** | Standardized stake (1 per pick) | 25 picks = 25 units wagered |
+| **Units** | Standardized stake (1 per pick) | 25 picks = 25 units |
 | **Result Units** | Profit/loss from a pick | Win: +0.91, Loss: -1.0, Push: 0.0 |
 | **Total Units** | Net profit across all picks | +3.5 units (winning user) |
-| **ROI** | Return on investment percentage | 14% ROI (3.5 units / 25 wagered) |
+| **ROI** | Return on investment percentage | 14% ROI (3.5 units / 25 picks) |
 | **Accuracy** | Percentage of picks won | 60% (15 wins / 25 picks) |
 
 ---

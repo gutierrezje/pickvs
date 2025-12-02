@@ -45,7 +45,7 @@ This design solves the following problems:
       "rank": 1,
       "username": "sharp_bettor_42",
       "total_units": 150.50,
-      "total_wagered": 100,
+      "total_picks": 100,
       "roi": 150.50,
       "accuracy": 0.65,
       "picks_since_minimum": 80
@@ -58,9 +58,9 @@ This design solves the following problems:
 - `rank`: Position on leaderboard (1-indexed)
 - `username`: User's display name
 - `total_units`: Net profit/loss across all picks (sum of result_units)
-- `total_wagered`: Total number of picks submitted
-- `roi`: Return on investment percentage = (total_units / total_wagered) * 100
-- `accuracy`: Win rate = (picks_won / total_wagered) * 100
+- `total_picks`: Total number of picks submitted
+- `roi`: Return on investment percentage = (total_units / total_picks) * 100
+- `accuracy`: Win rate = (picks_won / total_picks) * 100
 - `picks_since_minimum`: Number of picks above the 20-pick threshold (shows dominance)
 
 #### SQL Query
@@ -70,15 +70,15 @@ SELECT
     ROW_NUMBER() OVER (ORDER BY roi DESC, total_units DESC) as rank,
     username,
     total_units,
-    total_wagered,
-    ROUND((total_units / total_wagered)::numeric * 100, 2) as roi,
+    total_picks,
+    ROUND((total_units / total_picks)::numeric * 100, 2) as roi,
     ROUND(
-        (COUNT(CASE WHEN result_units > 0 THEN 1 END)::numeric / total_wagered) * 100,
+        (COUNT(CASE WHEN result_units > 0 THEN 1 END)::numeric / total_picks) * 100,
         2
     ) as accuracy,
-    (total_wagered - 20) as picks_since_minimum
+    (total_picks - 20) as picks_since_minimum
 FROM Users
-WHERE total_wagered >= 20
+WHERE total_picks >= 20
 ORDER BY roi DESC, total_units DESC
 ```
 
@@ -117,7 +117,7 @@ ORDER BY roi DESC, total_units DESC
       "rank": 1,
       "username": "new_user_123",
       "total_units": 8.50,
-      "total_wagered": 15,
+      "total_picks": 15,
       "roi": 56.67,
       "accuracy": 0.73
     }
@@ -133,7 +133,7 @@ WITH weekly_stats AS (
         p.user_id,
         u.username,
         SUM(p.result_units) as total_units,
-        COUNT(*) as total_wagered,
+        COUNT(*) as total_picks,
         COUNT(CASE WHEN p.result_units > 0 THEN 1 END) as picks_won
     FROM Picks p
     JOIN Users u ON p.user_id = u.user_id
@@ -144,18 +144,18 @@ SELECT
     ROW_NUMBER() OVER (ORDER BY roi DESC, total_units DESC) as rank,
     username,
     total_units,
-    total_wagered,
-    ROUND((total_units / total_wagered)::numeric * 100, 2) as roi,
-    ROUND((picks_won::numeric / total_wagered) * 100, 2) as accuracy
+    total_picks,
+    ROUND((total_units / total_picks)::numeric * 100, 2) as roi,
+    ROUND((picks_won::numeric / total_picks) * 100, 2) as accuracy
 FROM (
     SELECT
         user_id,
         username,
         total_units,
-        total_wagered,
+        total_picks,
         picks_won,
         CASE
-            WHEN total_wagered > 0 THEN (total_units / total_wagered) * 100
+            WHEN total_picks > 0 THEN (total_units / total_picks) * 100
             ELSE 0
         END as roi
     FROM weekly_stats
@@ -202,12 +202,12 @@ ORDER BY roi DESC, total_units DESC
 
 ## 4. Edge Cases & Handling
 
-### 4.1 Division by Zero (0 total_wagered)
+### 4.1 Division by Zero (0 total_picks)
 
 **Scenario**: User registered but made 0 picks
 
 **Handling**:
-- Exclude from both leaderboards (WHERE total_wagered > 0)
+- Exclude from both leaderboards (WHERE total_picks > 0)
 - Show on user profile as "No picks yet"
 
 ### 4.2 Exact ROI Ties

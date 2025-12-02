@@ -6,9 +6,8 @@ import csv
 from datetime import datetime
 from pathlib import Path
 
-from utils.odds import american_to_decimal
-
 from data.types import GameRecord, GameStatus, MarketType, OddsRecord
+from utils.odds import american_to_decimal
 
 
 def parse_csv(csv_path: str | Path) -> tuple[list[GameRecord], list[OddsRecord]]:

@@ -1,18 +1,21 @@
 """Internal pydantic models for csv parsing and database loading."""
 
-from pydantic import BaseModel, Field
 from datetime import datetime
 from enum import Enum
+
+from pydantic import BaseModel, Field
 
 
 class GameStatus(str, Enum):
     SCHEDULED = "Scheduled"
     FINISHED = "Finished"
 
+
 class MarketType(str, Enum):
     MONEYLINE = "moneyline"
     SPREAD = "spread"
     TOTALS = "totals"
+
 
 class OddsRecord(BaseModel):
     """Odds information for a single market for a game."""
@@ -22,6 +25,7 @@ class OddsRecord(BaseModel):
     home_odds: float
     away_odds: float
     line_value: float | None = Field(default=None)
+
 
 class GameRecord(BaseModel):
     """Information about a single game."""

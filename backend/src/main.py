@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 
 import asyncpg
@@ -6,17 +7,23 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from . import database
 from .config import settings
+from .routers import auth
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Use TEST_DATABASE_URL if available (for tests), otherwise use production URL
+    db_url = settings.database_url_pooler
+
     database.db_pool = await asyncpg.create_pool(
-        settings.database_url_pooler,
+        db_url,
         min_size=1,
         max_size=10,
         command_timeout=60,
     )
-    print("Database pool created")
+    print(
+        f"Database pool created ({'TEST' if os.getenv('TEST_DATABASE_URL') else 'PROD'})"
+    )
 
     # Yield to application
     yield
@@ -36,6 +43,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include routers
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
 
 
 @app.get("/health")

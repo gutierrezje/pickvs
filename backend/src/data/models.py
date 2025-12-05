@@ -14,7 +14,7 @@ class GameStatus(str, Enum):
 class MarketType(str, Enum):
     MONEYLINE = "moneyline"
     SPREAD = "spread"
-    TOTALS = "totals"
+    TOTAL = "total"
 
 
 class OddsRecord(BaseModel):

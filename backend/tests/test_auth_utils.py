@@ -60,4 +60,4 @@ def test_decode_access_token_expired():
         decode_access_token(token)
         raise AssertionError("Expected ValueError for expired token")
     except ValueError as e:
-        assert str(e) == "Invalid token"
+        assert str(e) == "Token has expired"

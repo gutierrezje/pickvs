@@ -6,7 +6,7 @@ from decimal import Decimal
 import pytest
 
 from data.load import insert_game, insert_odd
-from data.types import GameRecord, GameStatus, MarketType, OddsRecord
+from data.models import GameRecord, GameStatus, MarketType, OddsRecord
 
 
 @pytest.fixture

@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS Users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     total_units DECIMAL(10, 2) DEFAULT 0.00,    -- Net units won/lost
-    total_picks DECIMAL(10, 2) DEFAULT 0.00,    -- Number of picks (denormalized from Picks table)
+    total_picks INT DEFAULT 0,                  -- Number of picks (denormalized from Picks table)
     roi DECIMAL(5, 2) DEFAULT 0.00,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS Games (
 CREATE TABLE IF NOT EXISTS Odds (
     odd_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     game_id UUID NOT NULL REFERENCES Games(game_id) ON DELETE CASCADE,
-    market_type VARCHAR(20) NOT NULL,       -- 'moneyline', 'spread', 'total', etc.
+    market_type VARCHAR(20) NOT NULL,       -- 'moneyline', 'spread', 'total'
     home_odds DECIMAL(7, 2) NOT NULL,
     away_odds DECIMAL(7, 2) NOT NULL,
     line_value DECIMAL(4, 1),             -- spread amount (e.g., -6.5) or total (e.g., 220.5)
@@ -43,11 +43,11 @@ CREATE TABLE IF NOT EXISTS Picks (
     pick_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES Users(user_id) ON DELETE CASCADE,
     game_id UUID NOT NULL REFERENCES Games(game_id) ON DELETE CASCADE,
-    market_picked VARCHAR(20) NOT NULL,           -- 'moneyline', 'spread', 'total', etc.
+    market_picked VARCHAR(20) NOT NULL,           -- 'moneyline', 'spread', 'total'
     outcome_picked VARCHAR(100) NOT NULL,
     stake_units DECIMAL(3, 1) NOT NULL DEFAULT 1.0,
     odds_at_pick DECIMAL(7, 2) NOT NULL,
-    result_units DECIMAL(5, 2),                 -- 'win', 'lose', 'push'
+    result_units DECIMAL(5, 2),                 -- units won/lost (positive or negative)
     created_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(user_id, game_id, market_picked)       -- Ensure one pick per market per user
 );

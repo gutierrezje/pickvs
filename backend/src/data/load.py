@@ -7,7 +7,7 @@ from pathlib import Path
 import asyncpg
 
 from data.parser import parse_csv
-from data.types import GameRecord, OddsRecord
+from data.models import GameRecord, OddsRecord
 
 
 async def get_db_connection(use_pooler: bool = False) -> asyncpg.Connection:
@@ -71,21 +71,24 @@ async def insert_odd(conn: asyncpg.Connection, odds: OddsRecord, game_id: str) -
 
 
 async def insert_games(
-    conn: asyncpg.Connection, games: list[GameRecord], progress_interval: int = 500
+    conn: asyncpg.Connection, games: list[GameRecord], batch_size: int = 500
 ) -> dict[str, str]:
     """Insert games and return mapping of api_game_id -> game_id.
+
+    Uses batch insert with executemany followed by a single SELECT to fetch
+    the game_id mappings, reducing database round-trips from N to 2 per batch.
 
     Args:
         conn: Database connection
         games: List of GameRecord objects to insert
-        progress_interval: Print progress every N games (default 500)
+        batch_size: Number of games to insert per batch (default 500)
 
     Returns:
         Dictionary mapping api_game_id to database game_id (UUID as string)
     """
     game_id_map = {}
 
-    query = """
+    insert_query = """
         INSERT INTO Games (api_game_id, home_team, away_team, game_timestamp, status, home_score, away_score)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
         ON CONFLICT (api_game_id)
@@ -93,18 +96,20 @@ async def insert_games(
             status = EXCLUDED.status,
             home_score = EXCLUDED.home_score,
             away_score = EXCLUDED.away_score,
-            fetched_at = NOW()
-        RETURNING api_game_id, game_id;
+            fetched_at = NOW();
+    """
+
+    select_query = """
+        SELECT api_game_id, game_id FROM Games WHERE api_game_id = ANY($1);
     """
 
     total = len(games)
-    for i in range(0, total, progress_interval):
-        batch = games[i : i + progress_interval]
+    for i in range(0, total, batch_size):
+        batch = games[i : i + batch_size]
 
-        # Insert games one at a time (need RETURNING clause for game_id mapping)
-        for game in batch:
-            result = await conn.fetchrow(
-                query,
+        # Prepare batch data for executemany
+        batch_data = [
+            (
                 game.api_game_id,
                 game.home_team,
                 game.away_team,
@@ -113,10 +118,20 @@ async def insert_games(
                 game.home_score,
                 game.away_score,
             )
-            if result:
-                game_id_map[result["api_game_id"]] = str(result["game_id"])
+            for game in batch
+        ]
 
-        print(f"Inserted {min(i + progress_interval, total)}/{total} games...")
+        # Batch insert all games
+        await conn.executemany(insert_query, batch_data)
+
+        # Fetch all game_id mappings in a single query
+        api_game_ids = [game.api_game_id for game in batch]
+        results = await conn.fetch(select_query, api_game_ids)
+
+        for row in results:
+            game_id_map[row["api_game_id"]] = str(row["game_id"])
+
+        print(f"Inserted {min(i + batch_size, total)}/{total} games...")
 
     return game_id_map
 

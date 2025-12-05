@@ -11,17 +11,27 @@ from src.main import app
 
 
 @pytest.fixture
-def client() -> TestClient:
+def client(setup_test_schema, clean_database) -> TestClient:  # noqa: ARG001
     """FastAPI test client fixture."""
-    return TestClient(app)
+    with TestClient(app) as client:
+        yield client
+
+
+@pytest.fixture
+async def clean_database(test_db_url):
+    """Clean database tables before each test."""
+    conn = await asyncpg.connect(test_db_url)
+    try:
+        # Truncate tables that tests modify
+        await conn.execute("TRUNCATE Users, Picks, Games, Odds CASCADE")
+    finally:
+        await conn.close()
 
 
 @pytest.fixture(scope="session")
 def test_db_url():
     """Get test database URL from environment."""
     db_url = os.getenv("TEST_DATABASE_URL")
-    if not db_url:
-        pytest.skip("TEST_DATABASE_URL not set - skipping database tests")
     return db_url
 
 

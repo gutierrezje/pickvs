@@ -6,7 +6,7 @@ import csv
 from datetime import datetime
 from pathlib import Path
 
-from data.types import GameRecord, GameStatus, MarketType, OddsRecord
+from .models import GameRecord, GameStatus, MarketType, OddsRecord
 from utils.odds import american_to_decimal
 
 
@@ -95,9 +95,9 @@ def parse_csv(csv_path: str | Path) -> tuple[list[GameRecord], list[OddsRecord]]
                 line_value=float(row["spread"]) if is_home else (-float(row["spread"])),
             )
 
-            totals_record = OddsRecord(
+            total_record = OddsRecord(
                 api_game_id=game_record.api_game_id,
-                market_type=MarketType.TOTALS,
+                market_type=MarketType.TOTAL,
                 home_odds=1.909,
                 away_odds=1.909,
                 line_value=float(row["total"]),
@@ -105,6 +105,6 @@ def parse_csv(csv_path: str | Path) -> tuple[list[GameRecord], list[OddsRecord]]
 
             odds.append(moneyline_record)
             odds.append(spread_record)
-            odds.append(totals_record)
+            odds.append(total_record)
 
     return games, odds

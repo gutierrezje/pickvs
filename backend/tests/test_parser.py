@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from data.parser import parse_csv
 from data.models import GameRecord, GameStatus, MarketType, OddsRecord
+from data.parser import parse_csv
 
 
 def test_parse_csv():

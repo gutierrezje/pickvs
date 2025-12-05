@@ -66,7 +66,7 @@ lint.ignore = [
 ]
 
 [tool.pixi.tasks]
-test = { cmd = "pytest tests/ -v", env = { TEST_DATABASE_URL = "postgresql://test_user:test_password@localhost:5433/pickvs_test" } }
+test = "pytest tests/ -v"
 test-watch = "pytest --tb=short -v --looponfail"
 lint = "pyrefly check && ruff check"
 format = "ruff format && ruff check --select I --fix"

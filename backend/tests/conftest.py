@@ -1,70 +1,71 @@
 """Pytest configuration and shared fixtures."""
 
-import os
-from pathlib import Path
+from contextlib import asynccontextmanager
 
 import asyncpg
 import pytest
-from fastapi.testclient import TestClient
+from starlette.testclient import TestClient
 
+from database import get_db
 from src.main import app
 
-
-@pytest.fixture
-def client(setup_test_schema, clean_database) -> TestClient:  # noqa: ARG001
-    """FastAPI test client fixture."""
-    with TestClient(app) as client:
-        yield client
+# Test database URL - hardcoded for test environment
+TEST_DATABASE_URL = "postgresql://test_user:test_password@localhost:5433/pickvs_test"
 
 
-@pytest.fixture
-async def clean_database(test_db_url):
-    """Clean database tables before each test."""
-    conn = await asyncpg.connect(test_db_url)
-    try:
-        # Truncate tables that tests modify
-        await conn.execute("TRUNCATE Users, Picks, Games, Odds CASCADE")
-    finally:
-        await conn.close()
+@asynccontextmanager
+async def test_lifespan(app):
+    """Empty lifespan for tests - we don't need the production db pool."""
+    yield
 
 
 @pytest.fixture(scope="session")
 def test_db_url():
-    """Get test database URL from environment."""
-    db_url = os.getenv("TEST_DATABASE_URL")
-    return db_url
-
-
-@pytest.fixture(scope="session")
-async def setup_test_schema(test_db_url):
-    """Initialize test database schema once per test session."""
-    conn = await asyncpg.connect(test_db_url)
-    try:
-        # Read and execute schema
-        schema_path = Path(__file__).parent.parent / "sql" / "schema.sql"
-        if schema_path.exists():
-            schema_sql = schema_path.read_text()
-            await conn.execute(schema_sql)
-        yield
-    finally:
-        await conn.close()
+    """Get test database URL."""
+    return TEST_DATABASE_URL
 
 
 @pytest.fixture
-async def db_connection(test_db_url, setup_test_schema):
-    """Provide a clean database connection for each test.
-
-    Uses transactions that are rolled back after each test,
-    ensuring test isolation without manual cleanup.
-    """
+async def db_connection(test_db_url):
+    """Provide a database connection for each test with transaction rollback."""
     conn = await asyncpg.connect(test_db_url)
-
-    # Start transaction (will be rolled back after test)
     transaction = conn.transaction()
     await transaction.start()
 
     yield conn
 
-    # Rollback transaction (undo all test changes)
     await transaction.rollback()
     await conn.close()
+
+
+@pytest.fixture
+async def clean_tables(test_db_url):
+    """Clean tables before each test for isolation."""
+    conn = await asyncpg.connect(test_db_url)
+    try:
+        await conn.execute("TRUNCATE Users, Picks, Odds, Games CASCADE")
+    finally:
+        await conn.close()
+
+
+@pytest.fixture
+def client(test_db_url, clean_tables) -> TestClient:  # noqa: ARG001
+    """FastAPI test client with dependency override for database."""
+
+    async def override_get_db():
+        conn = await asyncpg.connect(test_db_url)
+        try:
+            yield conn
+        finally:
+            await conn.close()
+
+    app.dependency_overrides[get_db] = override_get_db
+    original_lifespan = app.router.lifespan_context
+    app.router.lifespan_context = test_lifespan
+
+    try:
+        with TestClient(app, raise_server_exceptions=False) as test_client:
+            yield test_client
+    finally:
+        app.router.lifespan_context = original_lifespan
+        app.dependency_overrides.clear()

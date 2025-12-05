@@ -6,8 +6,8 @@ from pathlib import Path
 
 import asyncpg
 
-from data.parser import parse_csv
 from data.models import GameRecord, OddsRecord
+from data.parser import parse_csv
 
 
 async def get_db_connection(use_pooler: bool = False) -> asyncpg.Connection:

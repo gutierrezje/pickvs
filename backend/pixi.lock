@@ -198,7 +198,7 @@ packages:
 - pypi: ./
   name: backend
   version: 0.1.0
-  sha256: 291311aa9420bb008276e650f986776e2ee573d3a6fc12188601fb730e2faba2
+  sha256: 88cf7979c30cd1a8bded75ea316808ace2b6c51d33dc5e39a4126f7a8bb7ac34
   requires_python: '>=3.13'
   editable: true
 - conda: https://conda.anaconda.org/conda-forge/osx-arm64/bcrypt-4.3.0-py313h80e0809_2.conda

@@ -1,4 +1,3 @@
-import os
 from contextlib import asynccontextmanager
 
 import asyncpg
@@ -12,23 +11,16 @@ from .routers import auth
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Use TEST_DATABASE_URL if available (for tests), otherwise use production URL
-    db_url = settings.database_url_pooler
-
     database.db_pool = await asyncpg.create_pool(
-        db_url,
+        settings.database_url_pooler,
         min_size=1,
         max_size=10,
         command_timeout=60,
     )
-    print(
-        f"Database pool created ({'TEST' if os.getenv('TEST_DATABASE_URL') else 'PROD'})"
-    )
+    print("Database pool created")
 
-    # Yield to application
     yield
 
-    # Cleanup on shutdown
     await database.db_pool.close()
     print("Database pool closed")
 

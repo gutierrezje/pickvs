@@ -1,5 +1,4 @@
-
-def test_register_success(db_connection, client):
+def test_register_success(client):
     """Test successful user registration."""
     response = client.post(
         "/auth/register",
@@ -16,7 +15,7 @@ def test_register_success(db_connection, client):
     assert data["message"] == "User registered successfully"
 
 
-def test_register_existing_username(db_connection, client):
+def test_register_existing_username(client):
     """Test registration with existing username."""
     user_data = {
         "username": "user123",
@@ -34,7 +33,8 @@ def test_register_existing_username(db_connection, client):
     assert response2.status_code == 409
     assert response2.json()["detail"] == "Username already exists"
 
-def test_register_existing_email(db_connection, client):
+
+def test_register_existing_email(client):
     """Test registration with existing email."""
     user_data = {
         "username": "uniqueuser",
@@ -50,7 +50,8 @@ def test_register_existing_email(db_connection, client):
     assert response2.status_code == 409
     assert response2.json()["detail"] == "Email already registered"
 
-def test_login_success(db_connection, client):
+
+def test_login_success(client):
     """Test successful user login."""
     user_data = {
         "username": "loginuser",
@@ -74,7 +75,8 @@ def test_login_success(db_connection, client):
     assert "access_token" in data
     assert data["token_type"] == "bearer"
 
-def test_login_invalid_credentials(db_connection, client):
+
+def test_login_invalid_credentials(client):
     """Test login with invalid credentials."""
     user_data = {
         "username": "validuser",

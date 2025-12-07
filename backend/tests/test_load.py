@@ -1,5 +1,6 @@
 """Unit tests for database load functions."""
 
+import pytest
 from datetime import datetime
 from decimal import Decimal
 

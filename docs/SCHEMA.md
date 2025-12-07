@@ -36,7 +36,7 @@ CREATE TABLE Users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     total_units DECIMAL(10, 2) DEFAULT 0.00,       -- Net profit/loss
-    total_picks DECIMAL(10, 2) DEFAULT 0.00,       -- Number of picks
+    total_picks INT DEFAULT 0,                     -- Number of picks
     roi DECIMAL(5, 2) DEFAULT 0.00,                -- Return on investment %
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -49,7 +49,7 @@ CREATE TABLE Users (
 | email | VARCHAR | Unique email address |
 | password_hash | VARCHAR | Hashed password (bcrypt) |
 | total_units | DECIMAL | Updated by process-results-lambda |
-| total_picks | DECIMAL | Updated by process-results-lambda |
+| total_picks | INT | Updated by process-results-lambda |
 | roi | DECIMAL | Updated by process-results-lambda |
 | created_at | TIMESTAMPTZ | Auto-set on insert |
 
@@ -121,7 +121,7 @@ CREATE TABLE Picks (
     user_id UUID NOT NULL REFERENCES Users(user_id) ON DELETE CASCADE,
     game_id UUID NOT NULL REFERENCES Games(game_id) ON DELETE CASCADE,
     market_picked VARCHAR(20) NOT NULL,            -- 'moneyline', 'spread', 'total'
-    team_picked VARCHAR(100) NOT NULL,             -- e.g., 'Los Angeles Lakers' or 'Over'
+    outcome_picked VARCHAR(100) NOT NULL,          -- e.g., 'Los Angeles Lakers' or 'Over'
     stake_units DECIMAL(3, 1) NOT NULL DEFAULT 1.0,  -- Always 1 unit per pick
     odds_at_pick DECIMAL(7, 2) NOT NULL,          -- Decimal odds at time of pick
     result_units DECIMAL(5, 2),                    -- NULL until graded, then -1/0/+1.xx

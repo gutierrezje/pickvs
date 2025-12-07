@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from data.models import GameRecord, GameStatus, MarketType, OddsRecord
+from data.records import GameRecord, GameStatus, MarketType, OddsRecord
 from data.parser import parse_csv
 
 

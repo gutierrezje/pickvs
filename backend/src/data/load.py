@@ -6,7 +6,7 @@ from pathlib import Path
 
 import asyncpg
 
-from data.models import GameRecord, OddsRecord
+from data.records import GameRecord, OddsRecord
 from data.parser import parse_csv
 
 

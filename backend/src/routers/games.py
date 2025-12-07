@@ -1,17 +1,15 @@
-from models.game import OddsResponse
-from models.game import GameWithOdds
-from typing import Annotated
-from fastapi import APIRouter, Depends
-from asyncpg import Connection
-from models.game import UpcomingGamesResponse, GameWithOdds
-from database import get_db
+from fastapi import APIRouter
 
-ConnectionDep = Annotated[Connection, Depends(get_db)]
+from dependencies import ConnectionDep, CurrentUserDep
+from models.game import GameWithOdds, OddsResponse, UpcomingGamesResponse
 
 router = APIRouter()
 
+
 @router.get("/upcoming", response_model=UpcomingGamesResponse)
-async def get_upcoming_games(conn: ConnectionDep, limit: int | None = None):
+async def get_upcoming_games(
+    conn: ConnectionDep, user_id: CurrentUserDep, limit: int | None = None
+):
     """Fetch all scheduled games with odds."""
     query = """
         SELECT game_id, home_team, away_team, game_timestamp, status
@@ -21,7 +19,7 @@ async def get_upcoming_games(conn: ConnectionDep, limit: int | None = None):
     """
     if limit is not None:
         query += f" LIMIT {limit}"
-    
+
     games = await conn.fetch(query)
 
     result = []
@@ -34,7 +32,7 @@ async def get_upcoming_games(conn: ConnectionDep, limit: int | None = None):
             WHERE game_id = $1
             ORDER BY market_type
             """,
-            game["game_id"]
+            game["game_id"],
         )
 
         game_with_odds = GameWithOdds(
@@ -51,7 +49,7 @@ async def get_upcoming_games(conn: ConnectionDep, limit: int | None = None):
                     line_value=odd["line_value"],
                 )
                 for odd in odds
-            ]
+            ],
         )
         result.append(game_with_odds)
 

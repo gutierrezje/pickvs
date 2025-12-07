@@ -21,8 +21,8 @@ class GameWithOdds(BaseModel):
     status: str
     odds: list[OddsResponse] = Field(default_factory=list)
 
+
 class UpcomingGamesResponse(BaseModel):
     """List of upcoming games."""
+
     games: list[GameWithOdds] = Field(default_factory=list)
-
-

@@ -1,15 +1,16 @@
 """Pytest configuration and shared fixtures."""
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import asyncpg
 import pytest
 from starlette.testclient import TestClient
 
-from database import get_db
-from data.parser import parse_csv
 from data.load import insert_games, insert_odds
-from pathlib import Path
+from data.parser import parse_csv
+from data.records import GameStatus
+from database import get_db
 from src.main import app
 
 # Test database URL - hardcoded for test environment
@@ -73,12 +74,12 @@ def client(test_db_url, clean_tables) -> TestClient:  # noqa: ARG001
         app.router.lifespan_context = original_lifespan
         app.dependency_overrides.clear()
 
-@pytest.fixture
-def sample_upcoming_games_and_odds():
-    """Load some sample games and odds from csv, setting status to Scheduled."""
-    from data.records import GameStatus
 
-    csv_path=Path(__file__).parent.parent / "data" / "oddsData.csv"
+@pytest.fixture
+def sample_mixed_games_and_odds():
+    """Load some sample games from csv, converting some to Scheduled."""
+
+    csv_path = Path(__file__).parent.parent / "data" / "oddsData.csv"
     games, odds = parse_csv(csv_path)
 
     # Get unique games by api_game_id (CSV has duplicates for home/away perspectives)
@@ -89,14 +90,13 @@ def sample_upcoming_games_and_odds():
             seen_game_ids.add(game.api_game_id)
             unique_games.append(game)
 
-    # Take first 5 unique games
+    # Take first 5 unique games with mixed statuses
     sample_games = unique_games[:5]
-
-    # Convert games to Scheduled status for testing upcoming endpoint
-    for game in sample_games:
-        game.status = GameStatus.SCHEDULED
-        game.home_score = None
-        game.away_score = None
+    for i, game in enumerate(sample_games):
+        if i % 2 == 0:
+            game.status = GameStatus.SCHEDULED
+            game.home_score = None
+            game.away_score = None
 
     # Deduplicate odds: same game can have duplicate odds from home/away rows
     sample_game_ids = {game.api_game_id for game in sample_games}
@@ -114,9 +114,9 @@ def sample_upcoming_games_and_odds():
 
 
 @pytest.fixture
-async def populated_db(test_db_url, sample_upcoming_games_and_odds):
+async def populated_db(test_db_url, sample_mixed_games_and_odds):
     """Populate the test database with sample data."""
-    sample_games, sample_odds = sample_upcoming_games_and_odds
+    sample_games, sample_odds = sample_mixed_games_and_odds
 
     conn = await asyncpg.connect(test_db_url)
     try:
@@ -125,6 +125,7 @@ async def populated_db(test_db_url, sample_upcoming_games_and_odds):
         yield game_id_map
     finally:
         await conn.close()
+
 
 @pytest.fixture
 def logged_in_client(client):
@@ -150,4 +151,3 @@ def logged_in_client(client):
     assert token is not None
     client.headers.update({"Authorization": f"Bearer {token}"})
     return client
-

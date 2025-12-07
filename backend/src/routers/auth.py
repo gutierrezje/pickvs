@@ -1,16 +1,12 @@
 from datetime import timedelta
-from typing import Annotated
 
-from asyncpg import Connection
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, HTTPException, status
 
-from database import get_db
+from dependencies import ConnectionDep
 from models.user import TokenResponse, UserLogin, UserRegister
 from utils.auth import create_access_token, hash_password, verify_password
 
 router = APIRouter()
-
-ConnectionDep = Annotated[Connection, Depends(get_db)]
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)

@@ -1,6 +1,7 @@
 """Pytest configuration and shared fixtures."""
 
 from contextlib import asynccontextmanager
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import asyncpg
@@ -92,11 +93,14 @@ def sample_mixed_games_and_odds():
 
     # Take first 5 unique games with mixed statuses
     sample_games = unique_games[:5]
+    # Set scheduled games to 3 days in the future (dynamically)
+    future_date = datetime.now(UTC) + timedelta(days=3)
     for i, game in enumerate(sample_games):
         if i % 2 == 0:
             game.status = GameStatus.SCHEDULED
             game.home_score = None
             game.away_score = None
+            game.game_timestamp = future_date
 
     # Deduplicate odds: same game can have duplicate odds from home/away rows
     sample_game_ids = {game.api_game_id for game in sample_games}

@@ -38,6 +38,24 @@ async def submit_pick(
             detail="Cannot submit pick for a game after it has started.",
         )
 
+    # Check for duplicate pick (user + game + market)
+    existing_pick = await conn.fetchval(
+        """
+        SELECT pick_id
+        FROM Picks
+        WHERE user_id = $1 AND game_id = $2 AND market_picked = $3
+        """,
+        user_id,
+        pick.game_id,
+        pick.market_picked,
+    )
+
+    if existing_pick:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You have already submitted a pick for this game and market.",
+        )
+
     pick_id = await conn.fetchval(
         """
         INSERT INTO Picks (user_id, game_id, market_picked, outcome_picked, odds_at_pick)

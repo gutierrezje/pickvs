@@ -103,3 +103,16 @@ async def test_upcoming_games_expected(
                 f"Unexpected market_type: {odd['market_type']}"
             )
             assert_odds_match(odd, matching_odd)
+
+
+@pytest.mark.asyncio
+async def test_upcoming_games_limit(logged_in_client, populated_db):
+    """Fetch upcoming games with limit parameter."""
+    response = logged_in_client.get("/games/upcoming?limit=1")
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "games" in data
+
+    games = data["games"]
+    assert len(games) == 1, f"Expected 1 game, got {len(games)}"

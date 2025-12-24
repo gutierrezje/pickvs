@@ -29,7 +29,7 @@ app = FastAPI(title="PickVs API", version="0.1.0", lifespan=lifespan)
 
 # CORS middleware for frontend communication
 app.add_middleware(
-    CORSMiddleware,
+    CORSMiddleware,  # type: ignore
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],

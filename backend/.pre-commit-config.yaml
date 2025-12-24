@@ -1,0 +1,21 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ty
+        name: ty
+        entry: pixi run --manifest-path backend/pyproject.toml ty check
+        language: system
+        pass_filenames: false
+        types: [python]
+      - id: ruff
+        name: ruff
+        entry: pixi run --manifest-path backend/pyproject.toml ruff check --force-exclude
+        language: system
+        types: [python]
+        files: ^backend/
+      - id: ruff-format
+        name: ruff-format
+        entry: pixi run --manifest-path backend/pyproject.toml ruff format --check --force-exclude
+        language: system
+        types: [python]
+        files: ^backend/

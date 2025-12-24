@@ -1,5 +1,6 @@
 """Pytest configuration and shared fixtures."""
 
+from collections.abc import Iterator
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -54,7 +55,7 @@ async def clean_tables(test_db_url):
 
 
 @pytest.fixture
-def client(test_db_url, clean_tables) -> TestClient:  # noqa: ARG001
+def client(test_db_url, clean_tables) -> Iterator[TestClient]:  # noqa: ARG001
     """FastAPI test client with dependency override for database."""
 
     async def override_get_db():
